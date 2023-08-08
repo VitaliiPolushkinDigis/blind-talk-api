@@ -1,24 +1,36 @@
+import entities from './utils/typeorm/index';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+/* import {ConfigModule} from "@nestjs/config" */
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import entities from './utils/typeorm';
+import { PassportModule } from '@nestjs/passport';
+import { ConversationsModule } from './conversations/conversations.module';
+import { MessagesModule } from './messages/messages.module';
+import { GatewayModule } from './gateway/gateway.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ envFilePath: '.env.development' }),
+    PassportModule.register({ session: true }),
     AuthModule,
     UsersModule,
-    ConfigModule.forRoot({ envFilePath: '.env.development' }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost' /* 'database-1.c4ffj2rebimq.eu-central-1.rds.amazonaws.com' */,
+      host: 'localhost' /* 'database-1.chwzotdkgmwi.eu-central-1.rds.amazonaws.com' */,
+      port: 5432,
       username: 'postgres',
-      password: '123',
+      password: '123' /* '12345678' */,
       database: 'blind-talk',
-      synchronize: true,
       entities,
+      synchronize: true,
     }),
+    ConversationsModule,
+    MessagesModule,
+    GatewayModule,
+    EventEmitterModule.forRoot(),
   ],
   controllers: [],
   providers: [],
